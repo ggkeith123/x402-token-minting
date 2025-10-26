@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>x402rocks Token Minting</title>
+    <title>x402rocks Token - Mint Now!</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "ethers": "https://cdn.ethers.io/lib/ethers-5.7.esm.min.js"
+        }
+    }
+    </script>
     <style>
         * {
             margin: 0;
@@ -12,14 +19,15 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            color: #333;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
@@ -32,100 +40,35 @@
         .header h1 {
             font-size: 48px;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .header p {
-            font-size: 18px;
-            opacity: 0.9;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            font-size: 20px;
+            opacity: 0.95;
         }
 
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h2 {
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-icon {
-            font-size: 28px;
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .stat {
-            padding: 15px;
-            background: #f7f9fc;
-            border-radius: 8px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .input-group {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .input-group input,
-        .input-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: #667eea;
+        .wallet-section {
+            text-align: center;
+            padding: 20px 0;
         }
 
         .btn {
-            width: 100%;
-            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
@@ -135,81 +78,130 @@
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .btn:active {
-            transform: translateY(0);
-        }
-
         .btn:disabled {
-            background: #ccc;
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
 
-        .alert {
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .connected-wallet {
+            background: #f0f9ff;
             padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
         }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .connected-wallet p {
+            margin: 5px 0;
+            font-size: 14px;
         }
 
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #667eea;
+            word-break: break-all;
         }
 
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
         }
 
-        .transactions {
-            max-height: 300px;
-            overflow-y: auto;
+        .stat-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
         }
 
-        .transaction {
-            padding: 15px;
-            background: #f7f9fc;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        .stat-box .label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
         }
 
-        .transaction-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .transaction-id {
+        .stat-box .value {
+            font-size: 24px;
             font-weight: bold;
             color: #667eea;
         }
 
-        .transaction-amount {
-            color: #28a745;
-            font-weight: bold;
+        .mint-section {
+            margin: 30px 0;
         }
 
-        .transaction-address {
-            font-size: 12px;
-            color: #666;
-            font-family: monospace;
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group select,
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group select:focus,
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
         }
 
         .loading {
-            display: none;
             text-align: center;
             padding: 20px;
+            display: none;
         }
 
-        .loading.active {
+        .loading.show {
             display: block;
         }
 
@@ -220,7 +212,7 @@
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
+            margin: 0 auto;
         }
 
         @keyframes spin {
@@ -228,322 +220,308 @@
             100% { transform: rotate(360deg); }
         }
 
-        .balance-display {
-            text-align: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
+        .price-display {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
             color: white;
-            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
         }
 
-        .balance-display .balance {
-            font-size: 48px;
+        .price-display .amount {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .network-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: bold;
             margin: 10px 0;
         }
 
-        .footer {
+        footer {
             text-align: center;
             color: white;
             margin-top: 40px;
             opacity: 0.8;
-        }
-
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stat-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🪙 x402rocks Token Minting</h1>
-            <p>Mint tokens using the x402 payment protocol</p>
+            <h1>🚀 x402rocks Token</h1>
+            <p>Mint 50,000 tokens for just $1 USDC on Base Mainnet</p>
+            <div class="network-badge">Base Mainnet</div>
         </div>
 
-        <div id="alertContainer"></div>
+        <!-- Alert Messages -->
+        <div id="alert" class="alert"></div>
 
-        <div class="grid">
-            <!-- Token Info Card -->
-            <div class="card">
-                <h2><span class="card-icon">📊</span> Token Information</h2>
-                <div class="stat-grid">
-                    <div class="stat">
-                        <div class="stat-label">Token Name</div>
-                        <div class="stat-value" id="tokenName">-</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Symbol</div>
-                        <div class="stat-value" id="tokenSymbol">-</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Mint Price</div>
-                        <div class="stat-value" id="mintPrice">-</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Tokens/Mint</div>
-                        <div class="stat-value" id="tokensPerMint">-</div>
-                    </div>
-                </div>
+        <!-- Wallet Connection -->
+        <div class="card wallet-section">
+            <div id="walletDisconnected">
+                <h2>Connect Your Wallet</h2>
+                <p style="margin: 15px 0; color: #666;">Connect MetaMask to start minting</p>
+                <button id="connectBtn" class="btn">Connect Wallet</button>
             </div>
+            
+            <div id="walletConnected" style="display: none;">
+                <h2>✅ Wallet Connected</h2>
+                <div class="connected-wallet">
+                    <p><strong>Address:</strong></p>
+                    <p class="wallet-address" id="walletAddress">-</p>
+                    <p style="margin-top: 10px;"><strong>Your Balance:</strong> <span id="tokenBalance">0</span> x402rocks</p>
+                </div>
+                <button id="disconnectBtn" class="btn" style="background: #6b7280;">Disconnect</button>
+            </div>
+        </div>
 
-            <!-- Minting Stats Card -->
-            <div class="card">
-                <h2><span class="card-icon">📈</span> Minting Statistics</h2>
-                <div class="stat-grid">
-                    <div class="stat">
-                        <div class="stat-label">Total Mints</div>
-                        <div class="stat-value" id="totalMints">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Remaining</div>
-                        <div class="stat-value" id="remainingMints">-</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Total Revenue</div>
-                        <div class="stat-value" id="totalRevenue">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Unique Wallets</div>
-                        <div class="stat-value" id="uniqueWallets">0</div>
-                    </div>
+        <!-- Token Statistics -->
+        <div class="card">
+            <h2>📊 Token Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="label">Total Mints</div>
+                    <div class="value" id="totalMints">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Remaining</div>
+                    <div class="value" id="remainingMints">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Revenue</div>
+                    <div class="value" id="totalRevenue">$0</div>
                 </div>
             </div>
         </div>
 
-        <div class="grid">
-            <!-- Mint Token Card -->
-            <div class="card">
-                <h2><span class="card-icon">🪙</span> Mint Tokens</h2>
-                
-                <div class="balance-display">
-                    <div style="font-size: 14px; opacity: 0.9;">Your Balance</div>
-                    <div class="balance" id="userBalance">0</div>
-                    <div style="font-size: 14px; opacity: 0.9;" id="balanceSymbol">X402</div>
-                </div>
+        <!-- Minting Section -->
+        <div class="card" id="mintingSection" style="display: none;">
+            <h2>🎯 Mint Tokens</h2>
+            
+            <div class="price-display">
+                <div>Mint Price</div>
+                <div class="amount">$1 USDC</div>
+                <div style="font-size: 14px; margin-top: 5px;">Get 50,000 x402rocks tokens</div>
+            </div>
 
+            <div class="mint-section">
                 <div class="input-group">
-                    <label for="walletAddress">Wallet Address</label>
-                    <input type="text" id="walletAddress" placeholder="0x..." />
-                </div>
-
-                <div class="input-group">
-                    <label for="mintType">Mint Type</label>
+                    <label>Mint Type</label>
                     <select id="mintType">
-                        <option value="single">Single Mint</option>
-                        <option value="batch">Batch Mint</option>
+                        <option value="single">Single Mint (50,000 tokens)</option>
+                        <option value="batch">Batch Mint (multiple)</option>
                     </select>
                 </div>
 
                 <div class="input-group" id="batchCountGroup" style="display: none;">
-                    <label for="batchCount">Batch Count (1-10)</label>
-                    <input type="number" id="batchCount" min="1" max="10" value="3" />
+                    <label>Number of Mints (1-10)</label>
+                    <input type="number" id="batchCount" min="1" max="10" value="1">
                 </div>
-
-                <button class="btn" id="mintBtn" onclick="mintTokens()">
-                    Mint Tokens (x402 Payment)
-                </button>
 
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
-                    <p>Processing payment and minting...</p>
+                    <p style="margin-top: 10px;">Processing transaction...</p>
                 </div>
-            </div>
 
-            <!-- Recent Transactions Card -->
-            <div class="card">
-                <h2><span class="card-icon">📜</span> Recent Mints</h2>
-                <div class="transactions" id="recentTransactions">
-                    <p style="text-align: center; color: #999;">No mints yet</p>
-                </div>
+                <button id="mintBtn" class="btn btn-success" style="width: 100%; margin-top: 20px;">
+                    Mint Tokens
+                </button>
             </div>
         </div>
 
-        <div class="footer">
-            <p>Built with ❤️ using the x402 payment protocol</p>
-            <p style="margin-top: 10px; font-size: 14px;">
-                <a href="https://x402.org" target="_blank" style="color: white;">Learn more about x402</a>
-            </p>
-        </div>
+        <footer>
+            <p>Powered by Base Mainnet & x402 Protocol</p>
+            <p style="font-size: 12px; margin-top: 5px;">Smart Contract Verified on Basescan</p>
+        </footer>
     </div>
 
-    <script>
-        const API_URL = 'http://localhost:3000';
-        let currentAddress = '';
+    <script type="module">
+        import { ethers } from 'ethers';
+        
+        // Import contract configuration
+        import { CONTRACT_CONFIG, isCorrectNetwork, getTxUrl } from './frontend/contractConfig.js';
+        import { 
+            initializeWeb3,
+            getWalletAddress,
+            mintTokens,
+            batchMintTokens,
+            getTokenBalance,
+            getGlobalStats,
+            switchToBaseNetwork
+        } from './frontend/mintingUtils.js';
+
+        let isConnected = false;
+        let userAddress = null;
+
+        // DOM Elements
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const mintBtn = document.getElementById('mintBtn');
+        const mintType = document.getElementById('mintType');
+        const batchCount = document.getElementById('batchCount');
+        const walletDisconnected = document.getElementById('walletDisconnected');
+        const walletConnected = document.getElementById('walletConnected');
+        const mintingSection = document.getElementById('mintingSection');
+        const loading = document.getElementById('loading');
 
         // Show alert
         function showAlert(message, type = 'info') {
-            const alertContainer = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
+            const alert = document.getElementById('alert');
             alert.textContent = message;
-            alertContainer.appendChild(alert);
-            
+            alert.className = `alert ${type} show`;
             setTimeout(() => {
-                alert.remove();
+                alert.classList.remove('show');
             }, 5000);
         }
 
-        // Load token info
-        async function loadTokenInfo() {
+        // Connect wallet
+        async function connectWallet() {
             try {
-                const response = await fetch(`${API_URL}/api/token-info`);
-                const data = await response.json();
-                
-                document.getElementById('tokenName').textContent = data.name;
-                document.getElementById('tokenSymbol').textContent = data.symbol;
-                document.getElementById('mintPrice').textContent = `$${data.mintPrice} USDC`;
-                document.getElementById('tokensPerMint').textContent = data.tokensPerMint.toLocaleString();
-                document.getElementById('remainingMints').textContent = data.remainingMints.toLocaleString();
-                document.getElementById('balanceSymbol').textContent = data.symbol;
-            } catch (error) {
-                console.error('Error loading token info:', error);
-                showAlert('Failed to load token information', 'error');
-            }
-        }
-
-        // Load statistics
-        async function loadStats() {
-            try {
-                const response = await fetch(`${API_URL}/api/stats`);
-                const data = await response.json();
-                
-                document.getElementById('totalMints').textContent = data.totalMints;
-                document.getElementById('totalRevenue').textContent = `$${data.totalRevenue} USDC`;
-                document.getElementById('uniqueWallets').textContent = data.uniqueAddresses;
-                
-                // Display recent transactions
-                const container = document.getElementById('recentTransactions');
-                if (data.recentMints && data.recentMints.length > 0) {
-                    container.innerHTML = data.recentMints.map(mint => `
-                        <div class="transaction">
-                            <div class="transaction-header">
-                                <span class="transaction-id">Mint #${mint.mintNumber}</span>
-                                <span class="transaction-amount">+${mint.tokensMinted.toLocaleString()}</span>
-                            </div>
-                            <div class="transaction-address">${mint.address}</div>
-                        </div>
-                    `).join('');
-                } else {
-                    container.innerHTML = '<p style="text-align: center; color: #999;">No mints yet</p>';
+                if (!window.ethereum) {
+                    showAlert('Please install MetaMask to use this dApp!', 'error');
+                    window.open('https://metamask.io/download/', '_blank');
+                    return;
                 }
+
+                await initializeWeb3();
+                userAddress = await getWalletAddress();
+                
+                isConnected = true;
+                walletDisconnected.style.display = 'none';
+                walletConnected.style.display = 'block';
+                mintingSection.style.display = 'block';
+                
+                document.getElementById('walletAddress').textContent = userAddress;
+                
+                await updateBalance();
+                await updateStats();
+                
+                showAlert('Wallet connected successfully!', 'success');
             } catch (error) {
-                console.error('Error loading stats:', error);
+                console.error('Connection error:', error);
+                showAlert('Failed to connect wallet: ' + error.message, 'error');
             }
         }
 
-        // Load user balance
-        async function loadBalance(address) {
-            if (!address) return;
+        // Disconnect wallet
+        function disconnectWallet() {
+            isConnected = false;
+            userAddress = null;
+            walletDisconnected.style.display = 'block';
+            walletConnected.style.display = 'none';
+            mintingSection.style.display = 'none';
+            showAlert('Wallet disconnected', 'info');
+        }
+
+        // Update token balance
+        async function updateBalance() {
+            if (!userAddress) return;
             
             try {
-                const response = await fetch(`${API_URL}/api/balance/${address}`);
-                const data = await response.json();
-                
-                document.getElementById('userBalance').textContent = data.balance.toLocaleString();
+                const balance = await getTokenBalance(userAddress);
+                document.getElementById('tokenBalance').textContent = 
+                    parseFloat(balance).toLocaleString();
             } catch (error) {
-                console.error('Error loading balance:', error);
+                console.error('Balance error:', error);
             }
         }
 
-        // Mint tokens (simplified x402 flow)
-        async function mintTokens() {
-            const address = document.getElementById('walletAddress').value.trim();
-            
-            if (!address || !address.startsWith('0x')) {
-                showAlert('Please enter a valid wallet address', 'error');
+        // Update global stats
+        async function updateStats() {
+            try {
+                const stats = await getGlobalStats();
+                document.getElementById('totalMints').textContent = 
+                    stats.totalMints.toLocaleString();
+                document.getElementById('remainingMints').textContent = 
+                    stats.remainingMints.toLocaleString();
+                document.getElementById('totalRevenue').textContent = 
+                    '$' + parseFloat(stats.totalRevenue).toLocaleString();
+            } catch (error) {
+                console.error('Stats error:', error);
+                document.getElementById('totalMints').textContent = '-';
+                document.getElementById('remainingMints').textContent = '-';
+                document.getElementById('totalRevenue').textContent = '$-';
+            }
+        }
+
+        // Handle minting
+        async function handleMint() {
+            if (!isConnected) {
+                showAlert('Please connect your wallet first!', 'error');
                 return;
             }
 
-            currentAddress = address;
-            const mintType = document.getElementById('mintType').value;
-            const loading = document.getElementById('loading');
-            const btn = document.getElementById('mintBtn');
+            const isBatch = mintType.value === 'batch';
+            const count = isBatch ? parseInt(batchCount.value) : 1;
+
+            if (isBatch && (count < 1 || count > 10)) {
+                showAlert('Batch count must be between 1 and 10', 'error');
+                return;
+            }
 
             try {
-                loading.classList.add('active');
-                btn.disabled = true;
-
-                const endpoint = mintType === 'single' ? '/api/mint' : '/api/batch-mint';
-                const body = mintType === 'single' 
-                    ? { address }
-                    : { address, batchCount: parseInt(document.getElementById('batchCount').value) };
-
-                // Create mock x402 payment payload
-                const paymentPayload = {
-                    x402Version: 1,
-                    scheme: "exact",
-                    network: "base-sepolia",
-                    payload: {
-                        from: address,
-                        to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
-                        value: "1000000", // $1 USDC (6 decimals)
-                        signature: "0x" + "00".repeat(65)
-                    }
-                };
-
-                const paymentHeader = btoa(JSON.stringify(paymentPayload));
-
-                const response = await fetch(`${API_URL}${endpoint}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-PAYMENT': paymentHeader
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showAlert(`Successfully minted ${data.tokensMinted.toLocaleString()} tokens!`, 'success');
-                    await loadBalance(address);
-                    await loadStats();
+                loading.classList.add('show');
+                mintBtn.disabled = true;
+                
+                showAlert('Please approve the transaction in MetaMask...', 'info');
+                
+                let result;
+                if (isBatch) {
+                    result = await batchMintTokens(userAddress, count);
+                    showAlert(`Successfully minted ${count * 50000} tokens!`, 'success');
                 } else {
-                    showAlert(data.error || 'Minting failed', 'error');
+                    result = await mintTokens(userAddress);
+                    showAlert('Successfully minted 50,000 tokens!', 'success');
                 }
-
+                
+                console.log('Transaction:', result);
+                
+                // Update UI
+                await updateBalance();
+                await updateStats();
+                
             } catch (error) {
-                console.error('Error minting:', error);
-                showAlert('Failed to mint tokens: ' + error.message, 'error');
+                console.error('Mint error:', error);
+                showAlert('Minting failed: ' + error.message, 'error');
             } finally {
-                loading.classList.remove('active');
-                btn.disabled = false;
+                loading.classList.remove('show');
+                mintBtn.disabled = false;
             }
         }
 
-        // Handle mint type change
-        document.getElementById('mintType').addEventListener('change', (e) => {
-            const batchCountGroup = document.getElementById('batchCountGroup');
-            batchCountGroup.style.display = e.target.value === 'batch' ? 'block' : 'none';
+        // Event Listeners
+        connectBtn.addEventListener('click', connectWallet);
+        disconnectBtn.addEventListener('click', disconnectWallet);
+        mintBtn.addEventListener('click', handleMint);
+        
+        mintType.addEventListener('change', (e) => {
+            document.getElementById('batchCountGroup').style.display = 
+                e.target.value === 'batch' ? 'block' : 'none';
         });
 
-        // Handle address change
-        document.getElementById('walletAddress').addEventListener('blur', (e) => {
-            const address = e.target.value.trim();
-            if (address && address.startsWith('0x')) {
-                loadBalance(address);
-            }
-        });
+        // Check if wallet is already connected
+        if (window.ethereum) {
+            window.ethereum.request({ method: 'eth_accounts' })
+                .then(accounts => {
+                    if (accounts.length > 0) {
+                        connectWallet();
+                    }
+                });
+        }
 
-        // Initialize
-        loadTokenInfo();
-        loadStats();
+        // Load initial stats
+        updateStats();
         
         // Auto-refresh stats every 10 seconds
-        setInterval(() => {
-            loadStats();
-            if (currentAddress) {
-                loadBalance(currentAddress);
-            }
-        }, 10000);
+        setInterval(updateStats, 10000);
     </script>
 </body>
 </html>
