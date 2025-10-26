@@ -101,6 +101,26 @@
 
     <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
     <script>
+        // Wait for ethers.js to load
+        window.addEventListener('load', function() {
+            initializeDApp();
+        });
+
+        function initializeDApp() {
+            // Check if ethers loaded
+            if (typeof ethers === 'undefined') {
+                console.error('Ethers.js failed to load');
+                document.getElementById('alert').textContent = 'Loading error. Please refresh.';
+                document.getElementById('alert').className = 'alert error show';
+                return;
+            }
+
+            console.log('Ethers.js loaded successfully');
+            setupEventListeners();
+            updateStats();
+            setInterval(updateStats, 15000);
+        }
+
         // ⚠️ UPDATE THIS WITH YOUR CONTRACT ADDRESS!
         const CONTRACT_ADDRESS = "0x90AcD7128e5cdb7A4211Db0BE059400e35B329C3";
         const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
@@ -127,8 +147,16 @@
 
         async function connectWallet() {
             console.log('Connecting...');
+            
+            // Double check ethers is loaded
+            if (typeof ethers === 'undefined') {
+                showAlert('Loading library... Please try again in a moment.', 'error');
+                return;
+            }
+
             if (!window.ethereum) {
                 showAlert('Install MetaMask!', 'error');
+                window.open('https://metamask.io/download/', '_blank');
                 return;
             }
 
@@ -215,12 +243,11 @@
             }
         }
 
-        document.getElementById('connectBtn').onclick = connectWallet;
-        document.getElementById('disconnectBtn').onclick = () => location.reload();
-        document.getElementById('mintBtn').onclick = mint;
-
-        updateStats();
-        setInterval(updateStats, 15000);
+        function setupEventListeners() {
+            document.getElementById('connectBtn').onclick = connectWallet;
+            document.getElementById('disconnectBtn').onclick = () => location.reload();
+            document.getElementById('mintBtn').onclick = mint;
+        }
     </script>
 </body>
 </html>
