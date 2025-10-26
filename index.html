@@ -57,6 +57,19 @@
             text-align: center;
             margin: 10px 0;
         }
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -67,55 +80,95 @@
         </div>
 
         <div id="alert" class="alert"></div>
-
-        <div class="card">
-            <div id="walletDisconnected">
-                <h2>Connect Your Wallet</h2>
-                <p style="margin: 15px 0;">Connect MetaMask to start minting</p>
-                <button id="connectBtn" class="btn">Connect Wallet</button>
-            </div>
-            
-            <div id="walletConnected" style="display: none;">
-                <h2>✅ Wallet Connected</h2>
-                <p class="wallet-address" id="walletAddress"></p>
-                <p>Balance: <span id="tokenBalance">0</span> x402rocks</p>
-                <button id="disconnectBtn" class="btn" style="background: #6b7280; margin-top: 10px;">Disconnect</button>
-            </div>
+        <div id="loadingStatus" class="card" style="text-align: center;">
+            <div class="loading-indicator"></div>
+            <p style="margin-top: 10px;">Loading...</p>
         </div>
 
-        <div class="card">
-            <h2>📊 Stats</h2>
-            <div class="stat-box">
-                <div>Total Mints: <strong id="totalMints">-</strong></div>
-                <div>Remaining: <strong id="remainingMints">-</strong></div>
-                <div>Revenue: <strong id="totalRevenue">$0</strong></div>
+        <div id="mainContent" style="display: none;">
+            <div class="card">
+                <div id="walletDisconnected">
+                    <h2>Connect Your Wallet</h2>
+                    <p style="margin: 15px 0;">Connect MetaMask to start minting</p>
+                    <button id="connectBtn" class="btn">Connect Wallet</button>
+                </div>
+                
+                <div id="walletConnected" style="display: none;">
+                    <h2>✅ Wallet Connected</h2>
+                    <p class="wallet-address" id="walletAddress"></p>
+                    <p>Balance: <span id="tokenBalance">0</span> x402rocks</p>
+                    <button id="disconnectBtn" class="btn" style="background: #6b7280; margin-top: 10px;">Disconnect</button>
+                </div>
             </div>
-        </div>
 
-        <div class="card" id="mintingSection" style="display: none;">
-            <h2>🎯 Mint Tokens</h2>
-            <p style="margin: 15px 0;">Price: <strong>$1 USDC</strong> = <strong>50,000 tokens</strong></p>
-            <button id="mintBtn" class="btn" style="width: 100%;">Mint Tokens</button>
+            <div class="card">
+                <h2>📊 Stats</h2>
+                <div class="stat-box">
+                    <div>Total Mints: <strong id="totalMints">-</strong></div>
+                    <div>Remaining: <strong id="remainingMints">-</strong></div>
+                    <div>Revenue: <strong id="totalRevenue">$0</strong></div>
+                </div>
+            </div>
+
+            <div class="card" id="mintingSection" style="display: none;">
+                <h2>🎯 Mint Tokens</h2>
+                <p style="margin: 15px 0;">Price: <strong>$1 USDC</strong> = <strong>50,000 tokens</strong></p>
+                <button id="mintBtn" class="btn" style="width: 100%;">Mint Tokens</button>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+    <!-- Try multiple CDN sources for better reliability -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" 
+            onerror="loadBackupEthers()"></script>
+    
     <script>
-        // Wait for ethers.js to load
-        window.addEventListener('load', function() {
-            initializeDApp();
-        });
+        // Backup CDN loader
+        function loadBackupEthers() {
+            console.log('Primary CDN failed, trying backup...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.ethers.io/lib/ethers-5.7.umd.min.js';
+            script.onerror = function() {
+                showAlert('Failed to load Web3 library. Please refresh the page.', 'error');
+                document.getElementById('loadingStatus').style.display = 'none';
+            };
+            script.onload = function() {
+                console.log('Backup CDN loaded successfully');
+                initializeDApp();
+            };
+            document.head.appendChild(script);
+        }
+
+        // Wait for page and ethers.js to load
+        let initAttempts = 0;
+        const maxAttempts = 10;
+
+        function tryInitialize() {
+            if (typeof ethers !== 'undefined') {
+                console.log('✅ Ethers.js loaded successfully');
+                initializeDApp();
+            } else if (initAttempts < maxAttempts) {
+                initAttempts++;
+                console.log(`Waiting for ethers.js... (attempt ${initAttempts})`);
+                setTimeout(tryInitialize, 500);
+            } else {
+                console.error('❌ Failed to load ethers.js after multiple attempts');
+                showAlert('Failed to load Web3 library. Please refresh the page.', 'error');
+                document.getElementById('loadingStatus').style.display = 'none';
+            }
+        }
+
+        // Start initialization when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', tryInitialize);
+        } else {
+            tryInitialize();
+        }
 
         function initializeDApp() {
-            // Check if ethers loaded
-            if (typeof ethers === 'undefined') {
-                console.error('Ethers.js failed to load');
-                document.getElementById('alert').textContent = 'Loading error. Please refresh.';
-                document.getElementById('alert').className = 'alert error show';
-                return;
-            }
-
-            console.log('Ethers.js loaded successfully');
+            document.getElementById('loadingStatus').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            
             setupEventListeners();
             updateStats();
             setInterval(updateStats, 15000);
@@ -146,34 +199,69 @@
         }
 
         async function connectWallet() {
-            console.log('Connecting...');
+            console.log('🔗 Connecting wallet...');
             
-            // Double check ethers is loaded
             if (typeof ethers === 'undefined') {
-                showAlert('Loading library... Please try again in a moment.', 'error');
+                showAlert('Web3 library not loaded. Please refresh the page.', 'error');
                 return;
             }
 
             if (!window.ethereum) {
-                showAlert('Install MetaMask!', 'error');
-                window.open('https://metamask.io/download/', '_blank');
+                showAlert('MetaMask not detected! Please install MetaMask.', 'error');
+                setTimeout(() => {
+                    window.open('https://metamask.io/download/', '_blank');
+                }, 2000);
                 return;
             }
 
             try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                showAlert('Opening MetaMask...', 'info');
+                
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                console.log('✅ MetaMask connected:', accounts[0]);
+                
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 
                 const network = await provider.getNetwork();
+                console.log('🌐 Network:', network.chainId);
+                
                 if (network.chainId !== 8453) {
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0x2105' }]
-                    });
+                    showAlert('Switching to Base Mainnet...', 'info');
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0x2105' }]
+                        });
+                        // Wait a moment for network switch
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        provider = new ethers.providers.Web3Provider(window.ethereum);
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: '0x2105',
+                                    chainName: 'Base Mainnet',
+                                    nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+                                    rpcUrls: ['https://mainnet.base.org'],
+                                    blockExplorerUrls: ['https://basescan.org']
+                                }]
+                            });
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                            provider = new ethers.providers.Web3Provider(window.ethereum);
+                        } else {
+                            throw switchError;
+                        }
+                    }
                 }
                 
                 signer = provider.getSigner();
                 userAddress = await signer.getAddress();
+                
+                console.log('👤 User address:', userAddress);
                 
                 contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
                 usdcContract = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
@@ -184,21 +272,24 @@
                 document.getElementById('walletAddress').textContent = 
                     userAddress.slice(0,6) + '...' + userAddress.slice(-4);
                 
-                updateBalance();
-                updateStats();
-                showAlert('Connected!', 'success');
+                await updateBalance();
+                showAlert('✅ Wallet connected successfully!', 'success');
+                
             } catch (e) {
-                console.error(e);
+                console.error('❌ Connection error:', e);
                 showAlert('Connection failed: ' + e.message, 'error');
             }
         }
 
         async function updateBalance() {
+            if (!contract || !userAddress) return;
             try {
                 const bal = await contract.balanceOf(userAddress);
                 document.getElementById('tokenBalance').textContent = 
-                    ethers.utils.formatEther(bal);
-            } catch(e) {}
+                    parseFloat(ethers.utils.formatEther(bal)).toLocaleString();
+            } catch(e) {
+                console.error('Balance error:', e);
+            }
         }
 
         async function updateStats() {
@@ -209,35 +300,59 @@
                 document.getElementById('totalMints').textContent = total.toString();
                 document.getElementById('remainingMints').textContent = remaining.toString();
                 document.getElementById('totalRevenue').textContent = 
-                    '$' + ethers.utils.formatUnits(revenue, 6);
+                    '$' + parseFloat(ethers.utils.formatUnits(revenue, 6)).toLocaleString();
             } catch(e) {
+                console.log('Stats not available yet (contract not deployed)');
                 document.getElementById('totalMints').textContent = '0';
                 document.getElementById('remainingMints').textContent = '40,000';
+                document.getElementById('totalRevenue').textContent = '$0';
             }
         }
 
         async function mint() {
+            if (!userAddress) {
+                showAlert('Please connect wallet first!', 'error');
+                return;
+            }
+
             try {
                 document.getElementById('mintBtn').disabled = true;
+                showAlert('Checking USDC allowance...', 'info');
                 
                 const allowance = await usdcContract.allowance(userAddress, CONTRACT_ADDRESS);
                 const needed = ethers.utils.parseUnits('1', 6);
                 
                 if (allowance.lt(needed)) {
-                    showAlert('Approving USDC...', 'info');
-                    const tx = await usdcContract.approve(CONTRACT_ADDRESS, ethers.constants.MaxUint256);
-                    await tx.wait();
+                    showAlert('Please approve USDC in MetaMask...', 'info');
+                    const approveTx = await usdcContract.approve(
+                        CONTRACT_ADDRESS, 
+                        ethers.constants.MaxUint256
+                    );
+                    showAlert('Waiting for approval confirmation...', 'info');
+                    await approveTx.wait();
+                    showAlert('USDC approved! Now minting...', 'info');
                 }
                 
-                showAlert('Minting...', 'info');
-                const tx = await contract.mint(userAddress);
-                await tx.wait();
+                showAlert('Please confirm mint transaction in MetaMask...', 'info');
+                const mintTx = await contract.mint(userAddress);
                 
-                showAlert('Minted 50,000 tokens!', 'success');
-                updateBalance();
-                updateStats();
+                showAlert('Transaction sent! Waiting for confirmation...', 'info');
+                await mintTx.wait();
+                
+                showAlert('🎉 Successfully minted 50,000 tokens!', 'success');
+                
+                await updateBalance();
+                await updateStats();
+                
             } catch(e) {
-                showAlert('Error: ' + e.message, 'error');
+                console.error('❌ Mint error:', e);
+                let errorMsg = e.message;
+                if (e.message.includes('insufficient funds')) {
+                    errorMsg = 'Insufficient ETH for gas fees';
+                } else if (e.message.includes('user rejected')) {
+                    errorMsg = 'Transaction rejected';
+                }
+                showAlert('Minting failed: ' + errorMsg, 'error');
             } finally {
                 document.getElementById('mintBtn').disabled = false;
             }
@@ -247,6 +362,21 @@
             document.getElementById('connectBtn').onclick = connectWallet;
             document.getElementById('disconnectBtn').onclick = () => location.reload();
             document.getElementById('mintBtn').onclick = mint;
+            
+            // Listen for account changes
+            if (window.ethereum) {
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) {
+                        location.reload();
+                    } else {
+                        connectWallet();
+                    }
+                });
+                
+                window.ethereum.on('chainChanged', () => {
+                    location.reload();
+                });
+            }
         }
     </script>
 </body>
