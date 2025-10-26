@@ -1,24 +1,16 @@
 {
-  "version": 2,
-  "name": "x402rocks-token-minting",
-  "builds": [
+  "rewrites": [
     {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/frontend/(.*)",
-      "dest": "/frontend/$1"
+      "source": "/frontend/:path*",
+      "destination": "/frontend/:path*"
     },
     {
-      "src": "/(.*\\..+)",
-      "dest": "/$1"
+      "source": "/:path*.:ext",
+      "destination": "/:path*.:ext"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ],
   "headers": [
