@@ -3,122 +3,523 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>x402rocks Token - Mint Now!</title>
+    <title>🦴 x402rocks Token - Stone Age Minting 🔥</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'MedievalSharp', cursive, Arial, sans-serif;
+            background: linear-gradient(180deg, #3d2817 0%, #5c4033 50%, #3d2817 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             padding: 20px;
+            color: #2c1810;
+            position: relative;
+            overflow-x: hidden;
         }
-        .container { max-width: 800px; margin: 0 auto; }
-        .header { text-align: center; color: white; margin-bottom: 40px; }
-        .header h1 { font-size: 48px; margin-bottom: 10px; }
-        .header p { font-size: 20px; opacity: 0.95; }
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+
+        /* Cave wall texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.03) 2px,
+                    rgba(0,0,0,0.03) 4px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.03) 2px,
+                    rgba(0,0,0,0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 1;
         }
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
+
+        /* Fire animation at top */
+        .fire-container {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            font-size: 40px;
+            animation: flicker 2s infinite;
         }
-        .btn:hover { transform: translateY(-2px); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .alert {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            display: none;
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
         }
-        .alert.show { display: block; }
-        .alert.success { background: #d1fae5; color: #065f46; }
-        .alert.error { background: #fee2e2; color: #991b1b; }
-        .alert.info { background: #dbeafe; color: #1e40af; }
-        .wallet-address {
-            font-family: monospace;
-            word-break: break-all;
-            color: #667eea;
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
-        .stat-box {
-            background: #f3f4f6;
-            padding: 15px;
-            border-radius: 10px;
+
+        .header {
             text-align: center;
+            color: #d4a574;
+            margin-bottom: 40px;
+            margin-top: 60px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+        }
+
+        .header h1 {
+            font-size: 56px;
+            margin-bottom: 15px;
+            color: #f4e4c1;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .header h1::before,
+        .header h1::after {
+            content: '🦴';
+            margin: 0 20px;
+        }
+
+        .header p {
+            font-size: 22px;
+            color: #d4a574;
             margin: 10px 0;
         }
+
+        .cave-painting {
+            text-align: center;
+            font-size: 50px;
+            margin: 20px 0;
+            filter: sepia(0.8) brightness(0.8);
+        }
+
+        /* Stone tablet cards */
+        .card {
+            background: linear-gradient(135deg, #8b7355 0%, #6b5344 100%);
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: 
+                inset 0 2px 10px rgba(0,0,0,0.3),
+                0 10px 30px rgba(0,0,0,0.5),
+                0 0 0 3px #4a3728;
+            border: 4px solid #3d2817;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Rock texture */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0,0,0,0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .card h2 {
+            color: #f4e4c1;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .card h2::before {
+            content: '🪨 ';
+        }
+
+        /* Stone button */
+        .btn {
+            background: linear-gradient(135deg, #5c4033 0%, #3d2817 100%);
+            color: #f4e4c1;
+            border: 4px solid #2c1810;
+            padding: 18px 45px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'MedievalSharp', cursive;
+            text-transform: uppercase;
+            box-shadow: 
+                inset 0 2px 5px rgba(255,255,255,0.2),
+                0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .btn::before {
+            content: '🔥 ';
+        }
+
+        .btn::after {
+            content: ' 🔥';
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                inset 0 2px 5px rgba(255,255,255,0.3),
+                0 8px 20px rgba(0,0,0,0.6);
+            background: linear-gradient(135deg, #6b5344 0%, #4a3728 100%);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4a5f3a 0%, #2d3a1f 100%);
+            border-color: #1f2614;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #5c7348 0%, #3d4a2a 100%);
+        }
+
+        /* Alert messages - carved into stone */
+        .alert {
+            padding: 18px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+            border: 3px solid;
+            font-size: 18px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #6b8e4e 0%, #4f6b37 100%);
+            color: #f4e4c1;
+            border-color: #3d5028;
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, #8b4e4e 0%, #6b3737 100%);
+            color: #f4e4c1;
+            border-color: #502828;
+        }
+
+        .alert.info {
+            background: linear-gradient(135deg, #4e6b8b 0%, #37506b 100%);
+            color: #f4e4c1;
+            border-color: #283d50;
+        }
+
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            color: #f4e4c1;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        /* Stone tablet stats */
+        .stat-box {
+            background: linear-gradient(135deg, #4a3728 0%, #3d2817 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 15px 0;
+            border: 3px solid #2c1810;
+            box-shadow: 
+                inset 0 2px 5px rgba(0,0,0,0.3),
+                0 5px 10px rgba(0,0,0,0.4);
+        }
+
+        .stat-box div {
+            color: #f4e4c1;
+            font-size: 18px;
+            margin: 8px 0;
+        }
+
+        .stat-box strong {
+            color: #ffd700;
+            font-size: 28px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
         .loading-indicator {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 3px solid #6b5344;
+            border-top: 3px solid #f4e4c1;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Cave paintings decoration */
+        .cave-art {
+            position: fixed;
+            font-size: 60px;
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+            filter: sepia(1) brightness(0.6);
+        }
+
+        .cave-art-1 { top: 100px; left: 50px; }
+        .cave-art-2 { top: 300px; right: 50px; }
+        .cave-art-3 { bottom: 150px; left: 80px; }
+        .cave-art-4 { bottom: 100px; right: 100px; }
+
+        /* Prehistoric badge */
+        .network-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6b4e37 0%, #4a3728 100%);
+            color: #ffd700;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 15px 0;
+            border: 2px solid #2c1810;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+        }
+
+        .network-badge::before {
+            content: '⚡ ';
+        }
+
+        /* Price display - special stone tablet */
+        .price-display {
+            background: linear-gradient(135deg, #8b7355 0%, #6b5344 100%);
+            color: #ffd700;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 25px 0;
+            border: 4px solid #3d2817;
+            box-shadow: 
+                inset 0 2px 10px rgba(0,0,0,0.3),
+                0 8px 20px rgba(0,0,0,0.5);
+        }
+
+        .price-display .amount {
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+            margin: 10px 0;
+        }
+
+        .price-display::before {
+            content: '💰';
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            color: #d4a574;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        footer::before {
+            content: '🦕 ';
+        }
+
+        footer::after {
+            content: ' 🦴';
+        }
+
+        /* Connected wallet display */
+        .connected-wallet {
+            background: rgba(61, 40, 23, 0.6);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 3px solid #2c1810;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
+        }
+
+        .connected-wallet p {
+            color: #f4e4c1;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+            
+            .header p {
+                font-size: 16px;
+            }
+            
+            .btn {
+                font-size: 18px;
+                padding: 15px 30px;
+            }
+            
+            .cave-art {
+                font-size: 40px;
+            }
+        }
+
+        /* Torch/fire decorations */
+        .torch {
+            position: fixed;
+            font-size: 35px;
+            animation: torchFlicker 1.5s infinite alternate;
+        }
+
+        @keyframes torchFlicker {
+            0% { opacity: 0.8; filter: brightness(0.9); }
+            100% { opacity: 1; filter: brightness(1.1); }
+        }
+
+        .torch-left { top: 150px; left: 20px; }
+        .torch-right { top: 150px; right: 20px; }
     </style>
 </head>
 <body>
+    <!-- Cave paintings in background -->
+    <div class="cave-art cave-art-1">🦣</div>
+    <div class="cave-art cave-art-2">🦕</div>
+    <div class="cave-art cave-art-3">🦴</div>
+    <div class="cave-art cave-art-4">🪨</div>
+
+    <!-- Torches -->
+    <div class="torch torch-left">🔥</div>
+    <div class="torch torch-right">🔥</div>
+
+    <!-- Fire at top -->
+    <div class="fire-container">🔥</div>
+
     <div class="container">
         <div class="header">
-            <h1>🚀 x402rocks Token</h1>
-            <p>Mint 50,000 tokens for $1 USDC on Base Mainnet</p>
+            <h1>x402rocks Token</h1>
+            <div class="cave-painting">🦴 🪨 🔥</div>
+            <p>MINT 50,000 TOKENS FOR JUST 1 USDC ROCK</p>
+            <div class="network-badge">BASE MAINNET TRIBE</div>
         </div>
 
         <div id="alert" class="alert"></div>
+        
         <div id="loadingStatus" class="card" style="text-align: center;">
             <div class="loading-indicator"></div>
-            <p style="margin-top: 10px;">Loading...</p>
+            <p style="margin-top: 10px; color: #f4e4c1;">SUMMONING ANCIENT MAGIC...</p>
         </div>
 
         <div id="mainContent" style="display: none;">
+            <!-- Wallet Connection Stone Tablet -->
             <div class="card">
                 <div id="walletDisconnected">
-                    <h2>Connect Your Wallet</h2>
-                    <p style="margin: 15px 0;">Connect MetaMask to start minting</p>
-                    <button id="connectBtn" class="btn">Connect Wallet</button>
+                    <h2>CONNECT CAVE WALLET</h2>
+                    <div class="cave-painting">🦴 → 👛 ← 🦴</div>
+                    <p style="margin: 20px 0; color: #f4e4c1; font-size: 18px;">
+                        SUMMON METAMASK SPIRIT TO BEGIN STONE AGE MINTING
+                    </p>
+                    <button id="connectBtn" class="btn">CONNECT WALLET</button>
                 </div>
                 
                 <div id="walletConnected" style="display: none;">
-                    <h2>✅ Wallet Connected</h2>
-                    <p class="wallet-address" id="walletAddress"></p>
-                    <p>Balance: <span id="tokenBalance">0</span> x402rocks</p>
-                    <button id="disconnectBtn" class="btn" style="background: #6b7280; margin-top: 10px;">Disconnect</button>
+                    <h2>WALLET CONNECTED!</h2>
+                    <div class="cave-painting">✅ 👛 ✅</div>
+                    <div class="connected-wallet">
+                        <p><strong>🏹 HUNTER ADDRESS:</strong></p>
+                        <p class="wallet-address" id="walletAddress"></p>
+                        <p style="margin-top: 15px;"><strong>🪨 YOUR ROCKS:</strong> <span id="tokenBalance" style="color: #ffd700; font-size: 24px;">0</span> x402rocks</p>
+                    </div>
+                    <button id="disconnectBtn" class="btn" style="background: linear-gradient(135deg, #6b3737 0%, #502828 100%); margin-top: 15px;">DISCONNECT</button>
                 </div>
             </div>
 
+            <!-- Cave Wall Statistics -->
             <div class="card">
-                <h2>📊 Stats</h2>
+                <h2>TRIBAL STATISTICS</h2>
+                <div class="cave-painting">📊 🦴 📊</div>
                 <div class="stat-box">
-                    <div>Total Mints: <strong id="totalMints">-</strong></div>
-                    <div>Remaining: <strong id="remainingMints">-</strong></div>
-                    <div>Revenue: <strong id="totalRevenue">$0</strong></div>
+                    <div>🔥 TOTAL MINTS: <strong id="totalMints">-</strong></div>
+                    <div>🪨 REMAINING ROCKS: <strong id="remainingMints">-</strong></div>
+                    <div>💰 TRIBE REVENUE: <strong id="totalRevenue">$0</strong></div>
                 </div>
             </div>
 
+            <!-- Minting Stone Tablet -->
             <div class="card" id="mintingSection" style="display: none;">
-                <h2>🎯 Mint Tokens</h2>
-                <p style="margin: 15px 0;">Price: <strong>$1 USDC</strong> = <strong>50,000 tokens</strong></p>
-                <button id="mintBtn" class="btn" style="width: 100%;">Mint Tokens</button>
+                <h2>MINT STONE TOKENS</h2>
+                <div class="cave-painting">⛏️ 🪨 ⛏️</div>
+                
+                <div class="price-display">
+                    <div style="font-size: 20px; color: #f4e4c1;">ANCIENT PRICE</div>
+                    <div class="amount">1 USDC</div>
+                    <div style="font-size: 18px; color: #f4e4c1; margin-top: 10px;">
+                        = 50,000 STONE AGE TOKENS 🦴
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <p style="color: #f4e4c1; font-size: 18px; margin-bottom: 20px;">
+                        🔥 CLICK TO FORGE YOUR ROCKS 🔥
+                    </p>
+                    <button id="mintBtn" class="btn btn-success" style="width: 100%; font-size: 24px;">
+                        MINT TOKENS NOW!
+                    </button>
+                </div>
             </div>
         </div>
+
+        <footer>
+            <p>POWERED BY BASE MAINNET & ANCIENT BLOCKCHAIN MAGIC</p>
+            <p style="font-size: 14px; margin-top: 10px;">VERIFIED BY CAVE ELDERS ON BASESCAN</p>
+            <div class="cave-painting" style="font-size: 40px; margin-top: 15px;">🦴 🔥 🪨</div>
+        </footer>
     </div>
 
-    <!-- Try multiple CDN sources for better reliability -->
+    <!-- Load ethers.js from multiple CDN sources -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" 
             onerror="loadBackupEthers()"></script>
     
@@ -129,7 +530,7 @@
             const script = document.createElement('script');
             script.src = 'https://cdn.ethers.io/lib/ethers-5.7.umd.min.js';
             script.onerror = function() {
-                showAlert('Failed to load Web3 library. Please refresh the page.', 'error');
+                showAlert('Failed to summon blockchain spirits. Please refresh the cave.', 'error');
                 document.getElementById('loadingStatus').style.display = 'none';
             };
             script.onload = function() {
@@ -145,15 +546,15 @@
 
         function tryInitialize() {
             if (typeof ethers !== 'undefined') {
-                console.log('✅ Ethers.js loaded successfully');
+                console.log('✅ Ancient magic loaded successfully');
                 initializeDApp();
             } else if (initAttempts < maxAttempts) {
                 initAttempts++;
-                console.log(`Waiting for ethers.js... (attempt ${initAttempts})`);
+                console.log(`Summoning spirits... (attempt ${initAttempts})`);
                 setTimeout(tryInitialize, 500);
             } else {
-                console.error('❌ Failed to load ethers.js after multiple attempts');
-                showAlert('Failed to load Web3 library. Please refresh the page.', 'error');
+                console.error('❌ Failed to summon blockchain spirits');
+                showAlert('Failed to load ancient magic. Please refresh the cave.', 'error');
                 document.getElementById('loadingStatus').style.display = 'none';
             }
         }
@@ -193,21 +594,21 @@
 
         function showAlert(msg, type) {
             const alert = document.getElementById('alert');
-            alert.textContent = msg;
+            alert.textContent = '🪨 ' + msg + ' 🪨';
             alert.className = `alert ${type} show`;
             setTimeout(() => alert.classList.remove('show'), 5000);
         }
 
         async function connectWallet() {
-            console.log('🔗 Connecting wallet...');
+            console.log('🔗 Connecting cave wallet...');
             
             if (typeof ethers === 'undefined') {
-                showAlert('Web3 library not loaded. Please refresh the page.', 'error');
+                showAlert('Ancient magic not loaded. Please refresh the cave.', 'error');
                 return;
             }
 
             if (!window.ethereum) {
-                showAlert('MetaMask not detected! Please install MetaMask.', 'error');
+                showAlert('MetaMask spirit not detected! Install MetaMask to continue.', 'error');
                 setTimeout(() => {
                     window.open('https://metamask.io/download/', '_blank');
                 }, 2000);
@@ -215,13 +616,13 @@
             }
 
             try {
-                showAlert('Opening MetaMask...', 'info');
+                showAlert('Opening spirit portal...', 'info');
                 
                 const accounts = await window.ethereum.request({ 
                     method: 'eth_requestAccounts' 
                 });
                 
-                console.log('✅ MetaMask connected:', accounts[0]);
+                console.log('✅ Spirit connected:', accounts[0]);
                 
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 
@@ -229,13 +630,12 @@
                 console.log('🌐 Network:', network.chainId);
                 
                 if (network.chainId !== 8453) {
-                    showAlert('Switching to Base Mainnet...', 'info');
+                    showAlert('Switching to Base Tribe...', 'info');
                     try {
                         await window.ethereum.request({
                             method: 'wallet_switchEthereumChain',
                             params: [{ chainId: '0x2105' }]
                         });
-                        // Wait a moment for network switch
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         provider = new ethers.providers.Web3Provider(window.ethereum);
                     } catch (switchError) {
@@ -261,7 +661,7 @@
                 signer = provider.getSigner();
                 userAddress = await signer.getAddress();
                 
-                console.log('👤 User address:', userAddress);
+                console.log('👤 Hunter address:', userAddress);
                 
                 contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
                 usdcContract = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
@@ -273,11 +673,11 @@
                     userAddress.slice(0,6) + '...' + userAddress.slice(-4);
                 
                 await updateBalance();
-                showAlert('✅ Wallet connected successfully!', 'success');
+                showAlert('Cave wallet connected successfully!', 'success');
                 
             } catch (e) {
                 console.error('❌ Connection error:', e);
-                showAlert('Connection failed: ' + e.message, 'error');
+                showAlert('Connection to spirit realm failed: ' + e.message, 'error');
             }
         }
 
@@ -311,35 +711,35 @@
 
         async function mint() {
             if (!userAddress) {
-                showAlert('Please connect wallet first!', 'error');
+                showAlert('Connect your cave wallet first, hunter!', 'error');
                 return;
             }
 
             try {
                 document.getElementById('mintBtn').disabled = true;
-                showAlert('Checking USDC allowance...', 'info');
+                showAlert('Checking USDC rocks...', 'info');
                 
                 const allowance = await usdcContract.allowance(userAddress, CONTRACT_ADDRESS);
                 const needed = ethers.utils.parseUnits('1', 6);
                 
                 if (allowance.lt(needed)) {
-                    showAlert('Please approve USDC in MetaMask...', 'info');
+                    showAlert('Please approve USDC rocks in MetaMask spirit...', 'info');
                     const approveTx = await usdcContract.approve(
                         CONTRACT_ADDRESS, 
                         ethers.constants.MaxUint256
                     );
-                    showAlert('Waiting for approval confirmation...', 'info');
+                    showAlert('Waiting for tribal approval...', 'info');
                     await approveTx.wait();
-                    showAlert('USDC approved! Now minting...', 'info');
+                    showAlert('USDC rocks approved! Now forging tokens...', 'info');
                 }
                 
-                showAlert('Please confirm mint transaction in MetaMask...', 'info');
+                showAlert('Confirm minting ritual in MetaMask...', 'info');
                 const mintTx = await contract.mint(userAddress);
                 
-                showAlert('Transaction sent! Waiting for confirmation...', 'info');
+                showAlert('Stone carving in progress...', 'info');
                 await mintTx.wait();
                 
-                showAlert('🎉 Successfully minted 50,000 tokens!', 'success');
+                showAlert('🎉 Successfully forged 50,000 stone tokens! 🎉', 'success');
                 
                 await updateBalance();
                 await updateStats();
@@ -348,11 +748,11 @@
                 console.error('❌ Mint error:', e);
                 let errorMsg = e.message;
                 if (e.message.includes('insufficient funds')) {
-                    errorMsg = 'Insufficient ETH for gas fees';
+                    errorMsg = 'Not enough fire stones for ritual';
                 } else if (e.message.includes('user rejected')) {
-                    errorMsg = 'Transaction rejected';
+                    errorMsg = 'Ritual rejected by elder';
                 }
-                showAlert('Minting failed: ' + errorMsg, 'error');
+                showAlert('Minting ritual failed: ' + errorMsg, 'error');
             } finally {
                 document.getElementById('mintBtn').disabled = false;
             }
